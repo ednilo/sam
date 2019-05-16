@@ -15,7 +15,7 @@ public class SessionUserContext implements Serializable{
 	private FacesContext facesContext;
 
 	/**
-	 * a
+	 * 
 	 */
 	private static final long serialVersionUID = 4933212592354896928L;
 

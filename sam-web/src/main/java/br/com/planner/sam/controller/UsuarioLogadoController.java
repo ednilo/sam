@@ -23,7 +23,7 @@ public class UsuarioLogadoController implements Serializable {
 	private static final long serialVersionUID = 992749148440494261L;
 
 	/**
-	 * a
+	 * 
 	 */
 
 	@Inject

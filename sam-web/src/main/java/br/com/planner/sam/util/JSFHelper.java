@@ -11,7 +11,7 @@ import javax.inject.Named;
 public class JSFHelper implements Serializable {
 
 	/**
-	 * a
+	 * 
 	 */
 	private static final long serialVersionUID = -4502663581096264251L;
 
