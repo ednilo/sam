@@ -40,11 +40,11 @@
 				<p:messages id="mensagens"/>
 
 				<p:inputText id="email" value="#{usuarioLogadoController.email}"
-					size="37" styleClass="form-control" />
+					size="37" styleClass="form-control" autocomplete="off"/>
 				<p:watermark value="Email" for="email" id="wm-email"></p:watermark>
 
 				<p:password id="senha" value="#{usuarioLogadoController.senha}"
-					size="37" styleClass="form-control" />
+					size="37" styleClass="form-control" autocomplete="off" />
 				<p:watermark value="Senha" for="senha" id="wm-senha"></p:watermark>
 
 				<p:commandButton value="Entrar"

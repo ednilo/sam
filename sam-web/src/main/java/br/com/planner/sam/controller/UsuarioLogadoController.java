@@ -5,13 +5,13 @@ import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import br.com.planner.sam.data.UserRepository;
 import br.com.planner.sam.model.Usuario;
+import br.com.planner.sam.security.SessionUserContext;
+import br.com.planner.sam.util.JSFHelper;
 
 @Named
 @SessionScoped
@@ -20,10 +20,17 @@ public class UsuarioLogadoController implements Serializable {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 992749148440494261L;
+
+	/**
+	 * 
+	 */
 
 	@Inject
-	private FacesContext facesContext;
+	private SessionUserContext sessionUserContext;
+	
+	@Inject
+	private JSFHelper jsfHelper;
 
 	@Inject
 	private Logger log;
@@ -40,8 +47,7 @@ public class UsuarioLogadoController implements Serializable {
 	}
 
 	public Usuario getUsuario() {
-		Object usuario = facesContext.getExternalContext().getSessionMap().get("usuarioLogado");
-		return usuario == null ? null : (Usuario) usuario;
+		return sessionUserContext.getLoggedUser();
 	}
 
 	public String doLogin() {
@@ -50,24 +56,27 @@ public class UsuarioLogadoController implements Serializable {
 			Usuario usuario = userRepository.isUsuarioReadyToLogin(email, senha);
 
 			if (usuario == null) {
-				FacesMessage facesMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Login ou Senha errado, tente novamente !",
-						"Login ou Senha errado, tente novamente !");
-				facesContext.addMessage(null, facesMsg);
-				facesContext.validationFailed();
+				jsfHelper.addErrorMsg("Login ou Senha errado, tente novamente");
 				return "";
 			}
 
 			log.info("Usuário logado com Sucesso!");
-			facesContext.getExternalContext().getSessionMap().put("usuarioLogado", usuario);
+			sessionUserContext.addLoggedUserOnSession(usuario);
 
-			return "teste.xhtml?faces-redirect=true";
+			return "/pages/admin/teste_apos_filter.xhtml?faces-redirect=true";
 		} catch (Exception e) {
-			FacesMessage facesMsg = new FacesMessage(FacesMessage.SEVERITY_ERROR, e.getMessage(), e.getMessage());
-			facesContext.addMessage(null, facesMsg);
-			facesContext.validationFailed();
+			jsfHelper.addErrorMsg(e.getMessage());
 			e.printStackTrace();
 			return "";
 		}
+	}
+	
+	public String doLogout() {
+		log.info("Fazendo logout com usuário "
+				+ (sessionUserContext.getLoggedUser() == null ? "Usuario não logado" : sessionUserContext.getLoggedUser().getEmail()));
+		sessionUserContext.invalidateSession();
+		log.info("Logout realizado com sucesso !");
+		return "/login.xhtml?faces-redirect=true";
 	}
 
 	public String getEmail() {
